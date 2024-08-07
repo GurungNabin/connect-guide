@@ -1,4 +1,4 @@
-import 'package:connect_me_app/features/bottom_navigation/mybottom_nav_bar.dart';
+import 'package:connect_me_app/presentation/view/features/bottom_navigation/mybottom_nav_bar.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
       debugShowMaterialGrid: false,
-      home: CustomBottomNavBar(),
+      home: BottomNavBar(),
     );
   }
 }

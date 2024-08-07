@@ -1,17 +1,17 @@
-import 'package:connect_me_app/features/home/home_page.dart';
-import 'package:connect_me_app/features/list/list_screen.dart';
-import 'package:connect_me_app/features/saved/saved_screen.dart';
-import 'package:connect_me_app/features/search/search_screen.dart';
+import 'package:connect_me_app/presentation/view/features/home/home_page.dart';
+import 'package:connect_me_app/presentation/view/features/list/list_screen.dart';
+import 'package:connect_me_app/presentation/view/features/saved/saved_screen.dart';
+import 'package:connect_me_app/presentation/view/features/search/search_screen.dart';
 import 'package:flutter/material.dart';
 
-class CustomBottomNavBar extends StatefulWidget {
-  const CustomBottomNavBar({super.key});
+class BottomNavBar extends StatefulWidget {
+  const BottomNavBar({super.key});
 
   @override
-  State<CustomBottomNavBar> createState() => _CustomBottomNavBarState();
+  State<BottomNavBar> createState() => _BottomNavBarState();
 }
 
-class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
+class _BottomNavBarState extends State<BottomNavBar> {
   int _selectedIndex = 0;
 
   void _navigateBottomBar(int index) {

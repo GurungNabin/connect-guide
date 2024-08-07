@@ -1,5 +1,5 @@
-import 'package:connect_me_app/common/custom_card.dart';
-import 'package:connect_me_app/features/search/search_bar.dart';
+import 'package:connect_me_app/presentation/view/common/custom_card.dart';
+import 'package:connect_me_app/presentation/view/features/search/search_bar.dart';
 import 'package:connect_me_app/theme/app_color.dart';
 import 'package:connect_me_app/theme/app_text_style.dart';
 import 'package:flutter/cupertino.dart';
