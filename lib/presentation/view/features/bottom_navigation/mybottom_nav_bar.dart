@@ -22,7 +22,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   final List _pages = [
     const HomePage(),
-    const SaavedScreen(),
+    const SavedScreen(),
     const SearchScreen(),
     const ListScreen(),
   ];

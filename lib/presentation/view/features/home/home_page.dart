@@ -1,5 +1,5 @@
 import 'package:connect_me_app/presentation/view/common/custom_card.dart';
-import 'package:connect_me_app/presentation/view/features/search/search_bar.dart';
+import 'package:connect_me_app/presentation/view/common/search_bar.dart';
 import 'package:connect_me_app/theme/app_color.dart';
 import 'package:connect_me_app/theme/app_text_style.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,9 +15,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: SingleChildScrollView(
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
           child: Container(
             color: AppTheme.mainColor,
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
