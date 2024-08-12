@@ -1,9 +1,14 @@
 import 'package:connect_me_app/presentation/view/common/custom_card.dart';
+import 'package:connect_me_app/presentation/view/common/details.dart';
+import 'package:connect_me_app/presentation/view/common/overview.dart';
+import 'package:connect_me_app/presentation/view/common/rating&review.dart';
 import 'package:connect_me_app/presentation/view/common/search_bar.dart';
+import 'package:connect_me_app/presentation/view/common/showbottomSheet.dart';
 import 'package:connect_me_app/theme/app_color.dart';
 import 'package:connect_me_app/theme/app_text_style.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,7 +17,25 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
+  late final TabController tabController;
+
+  @override
+  void initState() {
+    tabController = TabController(
+      length: 3,
+      vsync: this,
+    );
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    tabController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -119,7 +142,48 @@ class _HomePageState extends State<HomePage> {
                             distance: '3.1 km away',
                             time: '10 am - 5 pm',
                             rating: '3.1 rating',
-                            onTap: () {},
+                            onTap: () {
+                              // showModalBottomSheet(
+                              //     context: context,
+                              //     builder: (context) {
+                              //       return Container(
+                              //         // child:
+                              //         //   TabBar(
+                              //         //     controller: tabController,
+                              //         //     labelColor: Colors.blue,
+                              //         //     unselectedLabelColor: Colors.grey,
+                              //         //     indicatorColor: Colors.blue,
+                              //         //     tabs: [
+                              //         //       Tab(
+                              //         //         text: 'Overview',
+                              //         //       ),
+                              //         //       Tab(
+                              //         //         text: 'Rating&Review',
+                              //         //       ),
+                              //         //       Tab(
+                              //         //         text: 'Details',
+                              //         //       ),
+                              //         //     ],
+                              //         //   ),
+                              //         );
+
+                              //     });
+                              // Navigator.push(
+                              //     context,
+                              //     MaterialPageRoute(
+                              //         builder: (context) => showCustomBottomSheet(context: null)));
+                              showCustomBottomSheet(
+                                context: context,
+                                initialTabIndex: 0,
+                                heightFactor:
+                                    0.6, // Set the height to 70% of the screen height
+                                tabBarViews: [
+                                  OverView(),
+                                  RatingandReview(),
+                                  Details(),
+                                ],
+                              );
+                            },
                           );
                         },
                       ),
@@ -215,4 +279,58 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
+  void showCustomBottomSheet({
+    required BuildContext context,
+    int initialTabIndex = 0,
+    required List<Widget> tabBarViews,
+    double?
+        heightFactor, // This allows you to set the height as a factor of the screen height
+  }) {
+    showModalBottomSheet(
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+      ),
+      context: context,
+      builder: (context) {
+        double screenHeight = MediaQuery.of(context).size.height;
+        double bottomSheetHeight = heightFactor != null
+            ? screenHeight * heightFactor
+            : screenHeight /
+                2; // Default to half of screen height if not provided
+
+        return Container(
+          height: bottomSheetHeight, // Set the height of the bottom sheet
+          padding: MediaQuery.of(context).viewInsets,
+          child: DefaultTabController(
+            length: 3,
+            initialIndex: initialTabIndex,
+            child: Column(
+              children: <Widget>[
+                TabBar(
+                  labelColor: Colors.red,
+                  tabs: <Widget>[
+                    Tab(text: 'Overview'),
+                    Tab(text: 'Rating & Review'),
+                    Tab(text: 'Details'),
+                  ],
+                ),
+                Expanded(
+                  child: TabBarView(
+                    children: tabBarViews,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 }
+
+
+
+
+
