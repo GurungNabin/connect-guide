@@ -54,7 +54,7 @@ class CustomInfoCard extends StatelessWidget {
                   child: Text(
                     title,
                     style: TextStyle(
-                      color: Colors.purple.shade900,
+                      color: Colors.purple.shade600,
                     ),
                   ),
                 ),
@@ -77,7 +77,7 @@ class CustomInfoCard extends StatelessWidget {
                 const SizedBox(height: 8.0),
                 Row(
                   children: [
-                    const Icon(Icons.directions_walk, size: 16.0),
+                     Icon(Icons.directions_walk, size: 16.0,color: Theme.of(context).primaryColor),
                     const SizedBox(width: 4.0),
                     Text(distance),
                   ],
@@ -85,7 +85,7 @@ class CustomInfoCard extends StatelessWidget {
                 const SizedBox(height: 8.0),
                 Row(
                   children: [
-                    const Icon(Icons.access_time, size: 16.0),
+                     Icon(Icons.access_time, size: 16.0,color: Theme.of(context).primaryColor),
                     const SizedBox(width: 4.0),
                     Text(time),
                   ],
@@ -93,7 +93,7 @@ class CustomInfoCard extends StatelessWidget {
                 const SizedBox(height: 8.0),
                 Row(
                   children: [
-                    const Icon(Icons.star, size: 16.0),
+                     Icon(Icons.star, size: 16.0,color: Theme.of(context).primaryColor),
                     const SizedBox(width: 4.0),
                     Text(
                       rating.toString(),

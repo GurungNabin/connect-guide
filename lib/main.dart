@@ -12,7 +12,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return  MaterialApp(
+      theme: ThemeData(primaryColor:Colors.purple),
       debugShowCheckedModeBanner: false,
       debugShowMaterialGrid: false,
       home: BottomNavBar(),

@@ -176,10 +176,12 @@ class _HomePageState extends State<HomePage>
                                 context: context,
                                 initialTabIndex: 0,
                                 heightFactor:
-                                    0.6, // Set the height to 70% of the screen height
+                                    0.8, // Set the height to 70% of the screen height
                                 tabBarViews: [
-                                  OverView(),
-                                  RatingandReview(),
+                                  OverView(
+                                    
+                                  ),
+                                  RatingAndReviewTab(),
                                   Details(),
                                 ],
                               );
@@ -288,6 +290,7 @@ class _HomePageState extends State<HomePage>
         heightFactor, // This allows you to set the height as a factor of the screen height
   }) {
     showModalBottomSheet(
+      backgroundColor: Colors.white,
       isScrollControlled: true,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
