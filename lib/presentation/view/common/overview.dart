@@ -127,10 +127,17 @@ class OverView extends StatelessWidget {
                       'Social Links:',
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                    IconButton(
-                      icon: Icon(Icons.facebook, color: Colors.blue),
-                      onPressed: () {},
-                    ),
+                    
+                  ],
+                ),
+                
+              ),
+              Container(
+                child: IconButton(
+                        icon: Icon(Icons.facebook, color: Colors.blue),
+                        onPressed: () {},
+                      ),
+              ),
                     IconButton(
                       icon: Icon(Icons.camera_alt, color: Colors.purple),
                       onPressed: () {},
@@ -139,9 +146,6 @@ class OverView extends StatelessWidget {
                       icon: Icon(Icons.alternate_email, color: Colors.blue),
                       onPressed: () {},
                     ),
-                  ],
-                ),
-              ),
             ],
           ),
         ],
