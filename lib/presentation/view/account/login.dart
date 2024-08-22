@@ -1,3 +1,4 @@
+import 'package:connect_me_app/core/ui/colors.dart';
 import 'package:connect_me_app/presentation/view/account/register.dart';
 import 'package:connect_me_app/theme/app_color.dart';
 import 'package:flutter/material.dart';

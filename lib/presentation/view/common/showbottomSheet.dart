@@ -68,45 +68,52 @@
 //     );
 //   }
 // }
-import 'package:flutter/material.dart';
 
-void showCustomBottomSheet({
-  required BuildContext context,
-  int initialTabIndex = 0,
-  required List<Widget> tabBarViews,
-}) {
-  showModalBottomSheet(
-    isScrollControlled: true,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-    ),
-    context: context,
-    builder: (context) {
-      return Padding(
-        padding: MediaQuery.of(context).viewInsets,
-        child: DefaultTabController(
-          length: 3,
-          initialIndex: initialTabIndex,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              TabBar(
-                labelColor: Colors.red,
-                tabs: <Widget>[
-                  Tab(text: 'Overview'),
-                  Tab(text: 'Rating & Review'),
-                  Tab(text: 'Details'),
-                ],
-              ),
-              Flexible(
-                child: TabBarView(
-                  children: tabBarViews,
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    },
-  );
-}
+
+// import 'package:flutter/material.dart';
+
+// void showCustomBottomSheet({
+//   required BuildContext context,
+//   int initialTabIndex = 0,
+//   required List<Widget> tabBarViews,
+// }) {
+//   showModalBottomSheet(
+//     isScrollControlled: true,
+//     shape: RoundedRectangleBorder(
+//       borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+//     ),
+//     context: context,
+//     builder: (context) {
+//       return Padding(
+//         padding: MediaQuery.of(context).viewInsets,
+//         child: DefaultTabController(
+//           length: 3,
+//           initialIndex: initialTabIndex,
+//           child: Column(
+//             mainAxisSize: MainAxisSize.min,
+//             children: <Widget>[
+//               TabBar(
+//                 labelColor: Colors.red,
+//                 tabs: <Widget>[
+//                   Tab(text: 'Overview'),
+//                   Tab(text: 'Rating & Review'),
+//                   Tab(text: 'Details'),
+//                 ],
+//               ),
+//               Flexible(
+//                 child: TabBarView(
+//                   children: tabBarViews,
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       );
+//     },
+//   );
+// }
+
+
+
+
+

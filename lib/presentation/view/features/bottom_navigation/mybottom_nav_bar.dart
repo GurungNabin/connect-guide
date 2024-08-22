@@ -1,3 +1,5 @@
+
+
 import 'package:connect_me_app/presentation/view/features/home/home_page.dart';
 import 'package:connect_me_app/presentation/view/features/list/list_screen.dart';
 import 'package:connect_me_app/presentation/view/features/saved/saved_screen.dart';
@@ -20,7 +22,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     });
   }
 
-  final List _pages = [
+  final List<Widget> _pages = [
     const HomePage(),
     const SavedScreen(),
     const SearchScreen(),
@@ -29,6 +31,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   @override
   Widget build(BuildContext context) {
+    double itemWidth = MediaQuery.of(context).size.width / _pages.length;
+
     return Scaffold(
       body: _pages[_selectedIndex],
       bottomNavigationBar: Stack(
@@ -37,6 +41,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
             currentIndex: _selectedIndex,
             onTap: _navigateBottomBar,
             type: BottomNavigationBarType.fixed,
+            selectedItemColor: const Color(0xFF785ef6),
+            unselectedItemColor: Colors.grey,
             items: const [
               BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
               BottomNavigationBarItem(
@@ -48,13 +54,11 @@ class _BottomNavBarState extends State<BottomNavBar> {
           ),
           Positioned(
             top: 0,
-            left: MediaQuery.of(context).size.width /
-                _pages.length *
-                _selectedIndex,
+            left: itemWidth * _selectedIndex + itemWidth / 2 - (itemWidth / 4),
             child: Container(
-              width: MediaQuery.of(context).size.width / _pages.length,
+              width: itemWidth / 2,
               height: 2,
-              color: Colors.purple.shade900,
+              color: const Color(0xFF785ef6),
             ),
           ),
         ],

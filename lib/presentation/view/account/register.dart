@@ -1,5 +1,5 @@
+import 'package:connect_me_app/core/ui/colors.dart';
 import 'package:connect_me_app/presentation/view/features/bottom_navigation/mybottom_nav_bar.dart';
-import 'package:connect_me_app/theme/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
