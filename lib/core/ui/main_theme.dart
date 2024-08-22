@@ -1,4 +1,3 @@
-
 import 'package:connect_me_app/core/ui/colors.dart';
 import 'package:flutter/material.dart';
 
@@ -33,7 +32,7 @@ class ThemeConfig {
         textTheme: ButtonTextTheme.primary,
       ),
       appBarTheme: const AppBarTheme(
-        backgroundColor: Color(0xFF785ef6),
+        backgroundColor: Colors.white,
         iconTheme: IconThemeData(
           size: 20,
           color: Colors.white,
@@ -44,11 +43,11 @@ class ThemeConfig {
       ),
       dividerColor: Colors.blueGrey[200],
       cardColor: Colors.white,
-      colorScheme: ColorScheme(
-        primary: const Color(0xFF785ef6),
-        primaryContainer: const Color(0xFF6a4f8b),
-        secondary: Colors.teal,
-        secondaryContainer: Colors.teal[700]!,
+      colorScheme: const ColorScheme(
+        primary: Color(0xFF785ef6),
+        primaryContainer: Color(0xFF6a4f8b),
+        secondary: Color(0xFF785ef6),
+        secondaryContainer: Color(0xFF785ef6),
         surface: Colors.white,
         error: Colors.red,
         onPrimary: Colors.white,
