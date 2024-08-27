@@ -1,4 +1,3 @@
-
 import 'package:connect_me_app/model/business/business_model.dart';
 import 'package:connect_me_app/presentation/view/common/custom_card.dart';
 import 'package:flutter/material.dart';
@@ -24,10 +23,7 @@ class Details extends StatelessWidget {
                       const Icon(Icons.error, size: 100),
                 ))
             .toList()
-        : [
-            Image.network('https://via.placeholder.com/100',
-                width: 100, height: 100)
-          ];
+        : [Image.asset('assets/images/company.jpg', width: 100, height: 100)];
 
     final serviceWidgets = business.services?.map((service) {
           return Text(

@@ -1,6 +1,11 @@
 import 'package:connect_me_app/data/busniness_data.dart';
 import 'package:connect_me_app/model/business/business_model.dart';
+import 'package:connect_me_app/presentation/view/common/custom_card.dart';
+import 'package:connect_me_app/presentation/view/common/details.dart';
+import 'package:connect_me_app/presentation/view/common/overview.dart';
+import 'package:connect_me_app/presentation/view/common/rating&review.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -16,6 +21,7 @@ class _SearchScreenState extends State<SearchScreen> {
   List<Result> searchResults = [];
   bool isLoading = false;
   bool hasError = false;
+  int favoriteCount = 0;
 
   final categories = [
     'IT Companies',
@@ -26,6 +32,18 @@ class _SearchScreenState extends State<SearchScreen> {
     'School',
     'Government offices',
   ];
+
+  Future<void> _updateFavoriteCount() async {
+    final prefs = await SharedPreferences.getInstance();
+    final keys = prefs.getKeys();
+    setState(() {
+      favoriteCount = keys.length;
+    });
+  }
+
+  void _onFavoriteStatusChanged() {
+    _updateFavoriteCount();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -145,44 +163,41 @@ class _SearchScreenState extends State<SearchScreen> {
                         ListView.builder(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
+                          // scrollDirection: Axis.vertical,
                           itemCount: searchResults.length,
-                          itemBuilder: (context, index) {
+                          itemBuilder: (BuildContext context, int index) {
                             final business = searchResults[index];
-                            return Card(
-                              margin: const EdgeInsets.only(bottom: 16.0),
-                              child: ListTile(
-                                leading: business.photos != null &&
-                                        business.photos!.isNotEmpty
-                                    ? Image.network(
-                                        business.photos![0],
-                                        width: 50,
-                                        height: 50,
-                                        errorBuilder:
-                                            (context, error, stackTrace) {
-                                          return const Icon(Icons.error);
-                                        },
-                                      )
-                                    : const Icon(Icons.business),
-                                title: Text(business.name ?? "No Name"),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(business.category ?? "No Category"),
-                                    const SizedBox(height: 5),
-                                    Text("Location: ${business.location}"),
+                            return CustomInfoCard(
+                              title: business.category ?? 'No category',
+                              name: business.name ?? 'No name',
+                              address:
+                                  business.location?.toString() ?? 'No address',
+                              distance: '3.1 km away',
+                              time: '10 am - 5 pm',
+                              rating: business.rating,
+                              onTap: () {
+                                showCustomBottomSheet(
+                                  context: context,
+                                  initialTabIndex: 0,
+                                  heightFactor: 0.8,
+                                  tabBarViews: [
+                                    OverView(
+                                      business: business,
+                                      onFavoriteStatusChanged:
+                                          _onFavoriteStatusChanged,
+                                    ),
+                                    RatingAndReviewTab(
+                                      reviews: business.reviews ?? [],
+                                    ),
+                                    Details(
+                                      business: business,
+                                    ),
                                   ],
-                                ),
-                                trailing: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.star, color: Colors.yellow[700]),
-                                    Text(business.rating),
-                                  ],
-                                ),
-                              ),
+                                );
+                              },
                             );
                           },
-                        ),
+                        )
                       ]
                     ],
                   ),
@@ -279,5 +294,53 @@ class _SearchScreenState extends State<SearchScreen> {
         isLoading = false;
       });
     }
+  }
+
+  void showCustomBottomSheet({
+    required BuildContext context,
+    int initialTabIndex = 0,
+    required List<Widget> tabBarViews,
+    double? heightFactor,
+  }) {
+    showModalBottomSheet(
+      backgroundColor: Colors.white,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+      ),
+      context: context,
+      builder: (context) {
+        double screenHeight = MediaQuery.of(context).size.height;
+        double bottomSheetHeight = heightFactor != null
+            ? screenHeight * heightFactor
+            : screenHeight / 2;
+
+        return Container(
+          height: bottomSheetHeight,
+          padding: MediaQuery.of(context).viewInsets,
+          child: DefaultTabController(
+            length: 3,
+            initialIndex: initialTabIndex,
+            child: Column(
+              children: <Widget>[
+                const TabBar(
+                  labelColor: Colors.red,
+                  tabs: <Widget>[
+                    Tab(text: 'Overview'),
+                    Tab(text: 'Rating & Review'),
+                    Tab(text: 'Details'),
+                  ],
+                ),
+                Expanded(
+                  child: TabBarView(
+                    children: tabBarViews,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 }

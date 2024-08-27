@@ -1,6 +1,12 @@
+
 import 'package:connect_me_app/data/busniness_data.dart';
 import 'package:connect_me_app/model/business/business_model.dart';
+import 'package:connect_me_app/presentation/view/common/custom_card_list.dart';
+import 'package:connect_me_app/presentation/view/common/details.dart';
+import 'package:connect_me_app/presentation/view/common/overview.dart';
+import 'package:connect_me_app/presentation/view/common/rating&review.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ListScreen extends StatefulWidget {
   const ListScreen({super.key});
@@ -11,9 +17,11 @@ class ListScreen extends StatefulWidget {
 
 class _ListScreenState extends State<ListScreen> {
   late Future<BusinessModel> futureBusinessData;
+  List<Result> allBusinesses = [];
   List<Result> filteredBusinesses = [];
   String searchText = "";
   String selectedCategory = "All";
+  int favoriteCount = 0;
 
   @override
   void initState() {
@@ -21,32 +29,45 @@ class _ListScreenState extends State<ListScreen> {
     futureBusinessData = BusinessService().fetchBusinessData();
     futureBusinessData.then((data) {
       setState(() {
-        // Initialize the filtered list with all results when data is first loaded
-        filteredBusinesses = data.results;
+        allBusinesses = data.results;
+        filteredBusinesses = _applyFilters(allBusinesses);
       });
     });
   }
 
-  void _filterBusinesses(String searchText, String category) {
+  List<Result> _applyFilters(List<Result> businesses) {
+    return businesses.where((business) {
+      final matchesSearchText = business.name != null &&
+          business.name!.toLowerCase().contains(searchText.toLowerCase());
+      final matchesCategory = selectedCategory == "All" ||
+          (business.category != null &&
+              business.category!.toLowerCase() ==
+                  selectedCategory.toLowerCase());
+      return matchesSearchText && matchesCategory;
+    }).toList();
+  }
+
+  void _filterBusinesses() {
     setState(() {
-      filteredBusinesses = filteredBusinesses.where((business) {
-        final matchesSearchText = business.name != null &&
-            business.name!.toLowerCase().contains(searchText.toLowerCase());
-        final matchesCategory = category == "All" ||
-            (business.category != null &&
-                business.category!.toLowerCase() == category.toLowerCase());
-        return matchesSearchText && matchesCategory;
-      }).toList();
+      filteredBusinesses = _applyFilters(allBusinesses);
     });
+  }
+
+  Future<void> _updateFavoriteCount() async {
+    final prefs = await SharedPreferences.getInstance();
+    final keys = prefs.getKeys();
+    setState(() {
+      favoriteCount = keys.length;
+    });
+  }
+
+  void _onFavoriteStatusChanged() {
+    _updateFavoriteCount();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Business Near You'),
-        elevation: 0,
-      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -61,8 +82,8 @@ class _ListScreenState extends State<ListScreen> {
                 onChanged: (value) {
                   setState(() {
                     searchText = value;
+                    _filterBusinesses(); // Apply search filter
                   });
-                  _filterBusinesses(searchText, selectedCategory);
                 },
               ),
               const SizedBox(height: 20),
@@ -94,47 +115,46 @@ class _ListScreenState extends State<ListScreen> {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
                     } else if (snapshot.hasError) {
-                      return Center(
-                        child: Text('Error: ${snapshot.error}'),
-                      );
+                      return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (snapshot.hasData) {
-                      // No need to call _filterBusinesses here; it is handled during data load and user interaction
                       return ListView.builder(
+                        scrollDirection: Axis.vertical,
                         itemCount: filteredBusinesses.length,
-                        itemBuilder: (context, index) {
+                        itemBuilder: (BuildContext context, int index) {
                           final business = filteredBusinesses[index];
-                          return Card(
-                            margin: const EdgeInsets.only(bottom: 16.0),
-                            child: ListTile(
-                              leading: business.photos != null &&
-                                      business.photos!.isNotEmpty
-                                  ? Image.network(
-                                      business.photos![0],
-                                      width: 50,
-                                      height: 50,
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                        return const Icon(Icons.error);
-                                      },
-                                    )
-                                  : const Icon(Icons.business),
-                              title: Text(business.name ?? "No Name"),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(business.category ?? "No Category"),
-                                  const SizedBox(height: 5),
-                                  Text("Location: ${business.location}"),
+                          return CustomInfoCardList(
+                            title: business.category ?? 'No category',
+                            name: business.name ?? 'No name',
+                            address:
+                                business.location?.toString() ?? 'No address',
+                            distance: '3.1 km away',
+                            time: '10 am - 5 pm',
+                            rating: business.rating,
+                            imageUrl: (business.photos != null &&
+                                    business.photos!.isNotEmpty)
+                                ? business.photos![
+                                    0] // Safe access to the first photo
+                                : null, // Default to null if photos is null or empty
+                            onTap: () {
+                              showCustomBottomSheet(
+                                context: context,
+                                initialTabIndex: 0,
+                                heightFactor: 0.8,
+                                tabBarViews: [
+                                  OverView(
+                                    business: business,
+                                    onFavoriteStatusChanged:
+                                        _onFavoriteStatusChanged,
+                                  ),
+                                  RatingAndReviewTab(
+                                    reviews: business.reviews ?? [],
+                                  ),
+                                  Details(
+                                    business: business,
+                                  ),
                                 ],
-                              ),
-                              trailing: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.star, color: Colors.yellow[700]),
-                                  Text(business.rating),
-                                ],
-                              ),
-                            ),
+                              );
+                            },
                           );
                         },
                       );
@@ -160,10 +180,58 @@ class _ListScreenState extends State<ListScreen> {
         onSelected: (selected) {
           setState(() {
             selectedCategory = category;
-            _filterBusinesses(searchText, selectedCategory);
+            _filterBusinesses(); // Apply category filter
           });
         },
       ),
+    );
+  }
+
+  void showCustomBottomSheet({
+    required BuildContext context,
+    int initialTabIndex = 0,
+    required List<Widget> tabBarViews,
+    double? heightFactor,
+  }) {
+    showModalBottomSheet(
+      backgroundColor: Colors.white,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+      ),
+      context: context,
+      builder: (context) {
+        double screenHeight = MediaQuery.of(context).size.height;
+        double bottomSheetHeight = heightFactor != null
+            ? screenHeight * heightFactor
+            : screenHeight / 2;
+
+        return Container(
+          height: bottomSheetHeight,
+          padding: MediaQuery.of(context).viewInsets,
+          child: DefaultTabController(
+            length: 3,
+            initialIndex: initialTabIndex,
+            child: Column(
+              children: <Widget>[
+                const TabBar(
+                  labelColor: Colors.red,
+                  tabs: <Widget>[
+                    Tab(text: 'Overview'),
+                    Tab(text: 'Rating & Review'),
+                    Tab(text: 'Details'),
+                  ],
+                ),
+                Expanded(
+                  child: TabBarView(
+                    children: tabBarViews,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

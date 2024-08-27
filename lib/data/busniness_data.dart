@@ -1,6 +1,7 @@
+import 'package:http/http.dart' as http;
+
 import 'package:connect_me_app/core/network/constant/endpoints.dart';
 import 'package:connect_me_app/model/business/business_model.dart';
-import 'package:http/http.dart' as http;
 
 class BusinessService {
   Future<BusinessModel> fetchBusinessData() async {
