@@ -1,4 +1,3 @@
-
 import 'package:connect_me_app/data/busniness_data.dart';
 import 'package:connect_me_app/model/business/business_model.dart';
 import 'package:connect_me_app/presentation/view/common/custom_card_list.dart';
@@ -9,19 +8,33 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ListScreen extends StatefulWidget {
-  const ListScreen({super.key});
+  const ListScreen({super.key, this.selectedBusiness});
+
+  final Result? selectedBusiness;
 
   @override
   State<ListScreen> createState() => _ListScreenState();
 }
 
 class _ListScreenState extends State<ListScreen> {
-  late Future<BusinessModel> futureBusinessData;
+  late Future<List<Result>> futureBusinessData;
   List<Result> allBusinesses = [];
   List<Result> filteredBusinesses = [];
   String searchText = "";
   String selectedCategory = "All";
   int favoriteCount = 0;
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   futureBusinessData = BusinessService().fetchBusinessData();
+  //   futureBusinessData.then((data) {
+  //     setState(() {
+  //       allBusinesses = data.results;
+  //       filteredBusinesses = _applyFilters(allBusinesses);
+  //     });
+  //   });
+  // }
 
   @override
   void initState() {
@@ -29,8 +42,12 @@ class _ListScreenState extends State<ListScreen> {
     futureBusinessData = BusinessService().fetchBusinessData();
     futureBusinessData.then((data) {
       setState(() {
-        allBusinesses = data.results;
-        filteredBusinesses = _applyFilters(allBusinesses);
+        allBusinesses = data;
+        if (widget.selectedBusiness != null) {
+          filteredBusinesses = [widget.selectedBusiness!];
+        } else {
+          filteredBusinesses = _applyFilters(allBusinesses);
+        }
       });
     });
   }
@@ -109,7 +126,7 @@ class _ListScreenState extends State<ListScreen> {
               ),
               const SizedBox(height: 20),
               Expanded(
-                child: FutureBuilder<BusinessModel>(
+                child: FutureBuilder<List<Result>>(
                   future: futureBusinessData,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {

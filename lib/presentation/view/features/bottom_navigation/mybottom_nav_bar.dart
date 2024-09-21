@@ -1,5 +1,3 @@
-
-
 import 'package:connect_me_app/presentation/view/features/home/home_page.dart';
 import 'package:connect_me_app/presentation/view/features/list/list_screen.dart';
 import 'package:connect_me_app/presentation/view/features/saved/saved_screen.dart';
@@ -7,7 +5,9 @@ import 'package:connect_me_app/presentation/view/features/search/search_screen.d
 import 'package:flutter/material.dart';
 
 class BottomNavBar extends StatefulWidget {
-  const BottomNavBar({super.key});
+  const BottomNavBar({super.key, this.initialIndex = 0});
+
+  final int initialIndex;
 
   @override
   State<BottomNavBar> createState() => _BottomNavBarState();

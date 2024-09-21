@@ -463,6 +463,7 @@ import 'package:connect_me_app/presentation/view/common/custom_card.dart';
 import 'package:connect_me_app/presentation/view/common/details.dart';
 import 'package:connect_me_app/presentation/view/common/overview.dart';
 import 'package:connect_me_app/presentation/view/common/rating&review.dart';
+import 'package:connect_me_app/presentation/view/features/bottom_navigation/mybottom_nav_bar.dart';
 import 'package:connect_me_app/theme/app_text_style.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -478,7 +479,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   late final TabController tabController;
-  late Future<BusinessModel> businessData;
+  late Future<List<Result>> businessData;
   int favoriteCount = 0; // Add variable to hold favorite count
   String searchText = "";
   String selectedCategory = "All";
@@ -551,29 +552,56 @@ class _HomePageState extends State<HomePage>
           slivers: [
             SliverPersistentHeader(
               delegate: _SearchBarDelegate(
-                child: Container(
-                  color: Colors.white,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextField(
-                      decoration: const InputDecoration(
-                        hintText: "Search",
-                        border: OutlineInputBorder(),
-                        prefixIcon: Icon(Icons.search),
+                child: GestureDetector(
+                    onTap: () {
+                      // Navigate to the search screen
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const BottomNavBar(
+                            initialIndex: 2,
+                          ),
+                        ),
+                      );
+                    },
+                    child: AbsorbPointer(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(4.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.3),
+                                spreadRadius: 1,
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: TextField(
+                            decoration: const InputDecoration(
+                              hintText: "Search",
+                              border: InputBorder.none,
+                              prefixIcon: Icon(Icons.search),
+                            ),
+                            onChanged: (value) {
+                              setState(() {
+                                searchText = value;
+                                _filterBusinesses();
+                              });
+                            },
+                          ),
+                        ),
                       ),
-                      onChanged: (value) {
-                        setState(() {
-                          searchText = value;
-                          _filterBusinesses();
-                        });
-                      },
                     ),
                   ),
-                ),
+                
               ),
               pinned: true,
             ),
-            FutureBuilder<BusinessModel>(
+            FutureBuilder<List<Result>>(
               future: businessData,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -585,13 +613,7 @@ class _HomePageState extends State<HomePage>
                     child: Center(child: Text('Failed to load business data')),
                   );
                 } else if (snapshot.hasData) {
-                  final businesses = snapshot.data!.results;
-
-                  // Split the data for different sections
-                  final nearYouBusinesses = businesses.toList();
-                  final hotInTownBusinesses = businesses.skip(5).toList();
-                  final recommendedBusinesses =
-                      businesses.skip(7).take(5).toList();
+                  final businesses = snapshot.data!;
 
                   return SliverList(
                     delegate: SliverChildListDelegate(
@@ -653,19 +675,19 @@ class _HomePageState extends State<HomePage>
                         // Business near you
                         _buildBusinessSection(
                           title: 'Business near you',
-                          businesses: nearYouBusinesses,
+                          businesses: businesses,
                         ),
 
                         // Business hot in town
                         _buildBusinessSection(
                           title: 'Business hot in town',
-                          businesses: hotInTownBusinesses,
+                          businesses: businesses,
                         ),
 
                         // Recommended to you
                         _buildBusinessSection(
                           title: 'Recommended to you',
-                          businesses: recommendedBusinesses,
+                          businesses: businesses,
                         ),
                       ],
                     ),
@@ -773,11 +795,18 @@ class _HomePageState extends State<HomePage>
             initialIndex: initialTabIndex,
             child: Column(
               children: [
-                TabBar(
-                  tabs: List.generate(
-                    tabBarViews.length,
-                    (index) => Tab(text: 'Tab ${index + 1}'),
-                  ),
+                // TabBar(
+                //   tabs: List.generate(
+                //     tabBarViews.length,
+                //     (index) => Tab(text: 'Tab ${index + 1}'),
+                //   ),
+                // ),
+                const TabBar(
+                  tabs: <Widget>[
+                    Tab(text: 'Overview'),
+                    Tab(text: 'Rating & Review'),
+                    Tab(text: 'Details'),
+                  ],
                 ),
                 Expanded(
                   child: TabBarView(

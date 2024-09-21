@@ -266,11 +266,11 @@ class _SearchScreenState extends State<SearchScreen> {
       if (_locationRadius == 0 && _rating == 0 && selectedCategories.isEmpty) {
         // No filters applied, show all businesses
         setState(() {
-          searchResults = businessModel.results;
+          searchResults = businessModel;
         });
       } else {
         // Apply filters
-        final filteredResults = businessModel.results.where((business) {
+        final filteredResults = businessModel.where((business) {
           final matchesRating = double.tryParse(business.rating)! >= _rating;
           final matchesCategory = selectedCategories.isEmpty ||
               (business.category != null &&

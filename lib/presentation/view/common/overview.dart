@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:connect_me_app/core/ui/main_theme.dart';
 import 'package:connect_me_app/model/business/business_model.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,7 +17,7 @@ class OverView extends StatefulWidget {
   });
 
   @override
-  _OverViewState createState() => _OverViewState();
+  State<OverView> createState() => _OverViewState();
 }
 
 class _OverViewState extends State<OverView> {
@@ -28,16 +29,33 @@ class _OverViewState extends State<OverView> {
     _loadFavoriteStatus();
   }
 
+  // Future<void> _loadFavoriteStatus() async {
+  //   final prefs = await SharedPreferences.getInstance();
+
+  //   // Retrieve the value from SharedPreferences
+  //   final storedValue = prefs.get(widget.business.name ?? '');
+
+  //   // Safely cast the value to bool
+  //   if (storedValue is bool) {
+  //     setState(() {
+  //       isFavorite = storedValue;
+  //     });
+  //   } else {
+  //     setState(() {
+  //       isFavorite = false;
+  //     });
+  //   }
+  // }
+
   Future<void> _loadFavoriteStatus() async {
     final prefs = await SharedPreferences.getInstance();
-
     // Retrieve the value from SharedPreferences
     final storedValue = prefs.get(widget.business.name ?? '');
 
     // Safely cast the value to bool
-    if (storedValue is bool) {
+    if (storedValue is String) {
       setState(() {
-        isFavorite = storedValue;
+        isFavorite = true;
       });
     } else {
       setState(() {
@@ -45,6 +63,35 @@ class _OverViewState extends State<OverView> {
       });
     }
   }
+
+  // Future<void> _toggleFavorite() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   setState(() {
+  //     isFavorite = !isFavorite;
+  //     if (isFavorite) {
+  //       final data = {
+  //         'title': widget.business.category ?? 'No category',
+  //         'name': widget.business.name ?? 'No name',
+  //         'address': widget.business.location?.toString() ?? 'No address',
+  //         'distance': '3.1 km away',
+  //         'time': '10 am - 5 pm',
+  //         'rating': widget.business.rating,
+  //       };
+  //       prefs.setString(widget.business.name ?? '', json.encode(data));
+  //     } else {
+  //       prefs.remove(widget.business.name ?? '');
+  //     }
+  //   });
+
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     SnackBar(
+  //       content:
+  //           Text(isFavorite ? 'Added to Favorites' : 'Removed from Favorites'),
+  //     ),
+  //   );
+
+  //   widget.onFavoriteStatusChanged();
+  // }
 
   Future<void> _toggleFavorite() async {
     final prefs = await SharedPreferences.getInstance();
@@ -75,19 +122,42 @@ class _OverViewState extends State<OverView> {
     widget.onFavoriteStatusChanged();
   }
 
-  Future<void> _launchURL(BuildContext context, String url) async {
+  Future<void> _launchURL(BuildContext context, String? url) async {
+    if (url == null || url.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No website available')),
+      );
+      return;
+    }
     final Uri uri = Uri.parse(url);
+    print('Attempting to launch URL: $url');
     try {
       if (await canLaunchUrl(uri)) {
-        await launchUrl(uri);
+        print('Launching URL: $url');
+        await launchUrl(uri,
+            mode: LaunchMode.inAppBrowserView,
+            browserConfiguration: const BrowserConfiguration(showTitle: true));
       } else {
-        throw 'Could not launch $url';
+        print('Could not launch URL: $url');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not launch URL')),
+        );
       }
     } catch (e) {
       print('Error: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Could not open the URL')),
       );
+    }
+  }
+
+  Future<void> _launchInAppWithBrowserOptions(Uri url) async {
+    if (!await launchUrl(
+      url,
+      mode: LaunchMode.inAppBrowserView,
+      browserConfiguration: const BrowserConfiguration(showTitle: true),
+    )) {
+      throw Exception('Could not launch $url');
     }
   }
 
@@ -238,12 +308,15 @@ class _OverViewState extends State<OverView> {
                         ElevatedButton.icon(
                           onPressed: () {
                             final siteUrl = widget.business.website;
-                            if (siteUrl != null && siteUrl.isNotEmpty) {
-                              final validUrl = siteUrl.startsWith('http')
-                                  ? siteUrl
-                                  : 'http://$siteUrl';
-                              _launchURL(context, validUrl);
-                            }
+                            final validUrl =
+                                siteUrl != null && siteUrl.isNotEmpty
+                                    ? (siteUrl.startsWith('http')
+                                        ? siteUrl
+                                        : 'http://$siteUrl')
+                                    : null;
+
+                            _launchInAppWithBrowserOptions(
+                                Uri.parse(validUrl.toString()));
                           },
                           icon: const Icon(Icons.web, size: 16),
                           label: const Text("Website",
@@ -361,7 +434,7 @@ class _OverViewState extends State<OverView> {
               width: double.infinity,
               height: 50,
               decoration: BoxDecoration(
-                color: Colors.purpleAccent,
+                color: ThemeConfig.theme.primaryColor,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(

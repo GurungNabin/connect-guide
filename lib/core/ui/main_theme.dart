@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 class ThemeConfig {
   static ThemeData get theme {
     return ThemeData(
+      primarySwatch: Colors.blue,
       scaffoldBackgroundColor: AppTheme.colorWhite,
       primaryColor: const Color(0xFF785ef6),
       hintColor: Colors.red,
