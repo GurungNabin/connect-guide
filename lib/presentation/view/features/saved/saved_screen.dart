@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:connect_me_app/presentation/view/common/custom_card.dart';
+import 'package:connect_me_app/presentation/view/common/custom_card_list.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -8,7 +8,7 @@ class SavedScreen extends StatefulWidget {
   const SavedScreen({super.key});
 
   @override
-  _SavedScreenState createState() => _SavedScreenState();
+  State<SavedScreen> createState() => _SavedScreenState();
 }
 
 class _SavedScreenState extends State<SavedScreen> {
@@ -60,17 +60,25 @@ class _SavedScreenState extends State<SavedScreen> {
                           children: [
                             ListTile(
                               contentPadding: const EdgeInsets.all(8.0),
-                              title: CustomInfoCard(
-                                title: data['title'] ?? 'No category',
-                                name: data['name'] ?? 'No name',
-                                address: data['address'] ?? 'No address',
-                                distance: data['distance'] ?? 'Unknown',
-                                time: data['time'] ?? 'Unknown',
-                                rating: data['rating'] ?? '0',
-                                onTap: () {
-                                  // Handle tap event
-                                },
-                              ),
+                              // title: CustomInfoCard(
+                              //   title: data['title'] ?? 'No category',
+                              //   name: data['name'] ?? 'No name',
+                              //   address: data['address'] ?? 'No address',
+                              //   distance: data['distance'] ?? 'Unknown',
+                              //   time: data['time'] ?? 'Unknown',
+                              //   rating: data['rating'] ?? '0',
+                              //   onTap: () {
+                              //     // Handle tap event
+                              //   },
+                              // ),
+                              title: CustomInfoCardList(
+                                  title: data['title'],
+                                  name: data['name'],
+                                  address: data['address'],
+                                  distance: data['distance'],
+                                  time: data['time'],
+                                  rating: data['rating'],
+                                  onTap: () {}),
                             ),
                             Positioned(
                               top: 10,

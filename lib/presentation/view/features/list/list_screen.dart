@@ -164,7 +164,9 @@ class _ListScreenState extends State<ListScreen> {
                                         _onFavoriteStatusChanged,
                                   ),
                                   RatingAndReviewTab(
-                                    reviews: business.reviews ?? [],
+                                    // reviews: business.reviews ?? [],
+                                    // Line 167
+                                    reviews: business.reviews?.cast() ?? [],
                                   ),
                                   Details(
                                     business: business,
@@ -232,7 +234,6 @@ class _ListScreenState extends State<ListScreen> {
             child: Column(
               children: <Widget>[
                 const TabBar(
-                  labelColor: Colors.red,
                   tabs: <Widget>[
                     Tab(text: 'Overview'),
                     Tab(text: 'Rating & Review'),

@@ -161,6 +161,12 @@ class _OverViewState extends State<OverView> {
     }
   }
 
+  Future<void> _launchPhone(String phoneNumber) async {
+    if (!await launchUrl(Uri.parse('tel:$phoneNumber'))) {
+      throw Exception('Could not launch phone number: $phoneNumber');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final photos = widget.business.photos ?? [];
@@ -298,7 +304,7 @@ class _OverViewState extends State<OverView> {
                           onPressed: () {
                             final phoneNumber = widget.business.contact;
                             if (phoneNumber != null && phoneNumber.isNotEmpty) {
-                              _launchURL(context, 'tel:$phoneNumber');
+                              _launchPhone(phoneNumber);
                             }
                           },
                           icon: const Icon(Icons.call, size: 16),

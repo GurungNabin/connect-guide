@@ -1,3 +1,4 @@
+import 'package:connect_me_app/core/ui/main_theme.dart';
 import 'package:connect_me_app/data/busniness_data.dart';
 import 'package:connect_me_app/model/business/business_model.dart';
 import 'package:connect_me_app/presentation/view/common/custom_card.dart';
@@ -135,7 +136,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8.0),
                           ),
-                          backgroundColor: Colors.purple,
+                          backgroundColor: ThemeConfig.theme.primaryColor,
                         ),
                         child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -187,7 +188,9 @@ class _SearchScreenState extends State<SearchScreen> {
                                           _onFavoriteStatusChanged,
                                     ),
                                     RatingAndReviewTab(
-                                      reviews: business.reviews ?? [],
+                                      // reviews: business.reviews ?? [],
+                                      // Line 191
+                                      reviews: business.reviews?.cast() ?? [],
                                     ),
                                     Details(
                                       business: business,
